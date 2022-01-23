@@ -15,7 +15,7 @@ class Learner:
             # Find or create image's class in index
             if not os.path.exists('index'):
                 os.mkdir('index')
-            elif not os.path.exists('index/' + img_class):
+            if not os.path.exists('index/' + img_class):
                 os.mkdir('index/' + img_class)
 
             # Image is read as a matrix of pixels
