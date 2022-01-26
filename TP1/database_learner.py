@@ -64,7 +64,7 @@ class Learner:
         # Calculate HOG
         hog, hog_image = skimage.feature.hog(img_pixels, visualize = True)
 
-        # Save HOG into the image's class
+        # Save HOG into the image's class index
         file_name = 'index/' + img_class + '/' + img_name + '_hog'
         f = open(file_name + '.txt', 'w')
         f.write('|'.join([str(v) for v in hog]))
