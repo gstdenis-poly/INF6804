@@ -25,6 +25,8 @@ class Learner:
             # Learn oriented gradients histograms (HOG)
             self.learn_hog(img_name, img_class, img_pixels)
 
+            print('Image ' + img_name + ' learned')
+
 
     # Learn image's RGB color histogram
     def learn_rgb(self, img_name, img_class, img_pixels):
