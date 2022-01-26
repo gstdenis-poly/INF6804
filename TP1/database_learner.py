@@ -29,7 +29,8 @@ class Learner:
     # Learn image's RGB color histogram
     def learn_rgb(self, img_name, img_class, img_pixels):
         # Convert grayscale images' pixels to RGB color space
-        img_pixels = skimage.color.gray2rgb(img_pixels)
+        if img_pixels.ndim == 2: # == gray
+            img_pixels = skimage.color.gray2rgb(img_pixels)
         # Get red, green and blue tones for each pixel
         red_pixels, green_pixels, blue_pixels = [], [], []
         for pixels_row in img_pixels:
@@ -42,8 +43,9 @@ class Learner:
         red_histogram = np.histogram(red_pixels, bins = rgb_range)
         green_histogram = np.histogram(green_pixels, bins = rgb_range)
         blue_histogram = np.histogram(blue_pixels, bins = rgb_range)
-        # Save histograms into the image's class 
-        f = open('index/' + img_class + '/' + img_name + '.txt', 'w')
+        # Save histograms into the image's class index
+        file_name = 'index/' + img_class + '/' + img_name + '_rgb'
+        f = open(file_name + '.txt', 'w')
         for rp, gp, bp in zip(red_histogram[0], green_histogram[0], blue_histogram[0]):
             f.write(str(rp) + '|' + str(gp) + '|' + str(bp) + '\n')
         f.close()
@@ -53,13 +55,27 @@ class Learner:
         plt.plot(green_histogram[0], 'g')
         plt.plot(blue_histogram[0], 'b')
         # Save histograms' plot into the image's class index and clear plot
-        plt.savefig('index/' + img_class + '/' + img_name + '.png')
-        plt.clf() 
+        plt.savefig(file_name + '.png')
+        plt.clf()
 
 
     # Learn image's oriented gradients histograms (HOG)
     def learn_hog(self, img_name, img_class, img_pixels):
-        return # TODO
+        # Convert RGB images' pixels to grayscale color space
+        if img_pixels.ndim == 3: # == RGB
+            img_pixels = skimage.color.rgb2gray(img_pixels)
+
+        # Calculate HOG
+        hog, hog_image = skimage.feature.hog(img_pixels, visualize = True)
+
+        # Save HOG into the image's class
+        file_name = 'index/' + img_class + '/' + img_name + '_hog'
+        f = open(file_name + '.txt', 'w')
+        f.write('|'.join([str(v) for v in hog]))
+        f.close()
+
+        # Save HOG's image into the image's class index
+        plt.imsave(file_name + '.png', hog_image, cmap = "gray")
 
 
 # Program main function
