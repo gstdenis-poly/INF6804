@@ -31,29 +31,23 @@ class Learner:
         # Convert grayscale images' pixels to RGB color space
         if img_pixels.ndim == 2: # == gray
             img_pixels = skimage.color.gray2rgb(img_pixels)
-        # Get red, green and blue tones for each pixel
-        red_pixels, green_pixels, blue_pixels = [], [], []
-        for pixels_row in img_pixels:
-            red_pixels = red_pixels + [p[0] for p in pixels_row]
-            green_pixels = green_pixels + [p[1] for p in pixels_row]
-            blue_pixels = blue_pixels + [p[2] for p in pixels_row]
 
         # Calculate histogram for each color
-        rgb_range = range(0, 256)
-        red_histogram = np.histogram(red_pixels, bins = rgb_range)
-        green_histogram = np.histogram(green_pixels, bins = rgb_range)
-        blue_histogram = np.histogram(blue_pixels, bins = rgb_range)
+        red_histogram = skimage.exposure.histogram(img_pixels[:, :, 0])[0]
+        green_histogram = skimage.exposure.histogram(img_pixels[:, :, 1])[0]
+        blue_histogram = skimage.exposure.histogram(img_pixels[:, :, 2])[0]
+
         # Save histograms into the image's class index
         file_name = 'index/' + img_class + '/' + img_name + '_rgb'
         f = open(file_name + '.txt', 'w')
-        for rp, gp, bp in zip(red_histogram[0], green_histogram[0], blue_histogram[0]):
-            f.write(str(rp) + '|' + str(gp) + '|' + str(bp) + '\n')
+        for r, g, b in zip(red_histogram, green_histogram, blue_histogram):
+            f.write(str(r) + '|' + str(g) + '|' + str(b) + '\n')
         f.close()
 
         # Draw a plot with RGB histograms
-        plt.plot(red_histogram[0], 'r')
-        plt.plot(green_histogram[0], 'g')
-        plt.plot(blue_histogram[0], 'b')
+        plt.plot(red_histogram, 'r')
+        plt.plot(green_histogram, 'g')
+        plt.plot(blue_histogram, 'b')
         # Save histograms' plot into the image's class index and clear plot
         plt.savefig(file_name + '.png')
         plt.clf()
