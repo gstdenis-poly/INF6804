@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import os
 import skimage
 import sys
@@ -10,26 +9,22 @@ class Learner:
         for f in files:
             # Get image's name without its extension
             img_name = os.path.basename(f).split('.')[0]
-            # Image's prefix corresponds to its class
-            img_class = img_name.split('_')[0]
-            # Find or create image's class in index
+            # Find or create images' index
             if not os.path.exists('index'):
                 os.mkdir('index')
-            if not os.path.exists('index/' + img_class):
-                os.mkdir('index/' + img_class)
 
             # Image is read as a matrix of pixels
             img_pixels = skimage.io.imread(f)
             # Learn RGB color histograms
-            self.learn_rgb(img_name, img_class, img_pixels)
+            self.learn_rgb(img_name, img_pixels)
             # Learn oriented gradients histograms (HOG)
-            self.learn_hog(img_name, img_class, img_pixels)
+            self.learn_hog(img_name, img_pixels)
 
             print('Image ' + img_name + ' learned')
 
 
     # Learn image's RGB color histogram
-    def learn_rgb(self, img_name, img_class, img_pixels):
+    def learn_rgb(self, img_name, img_pixels):
         # Convert grayscale images' pixels to RGB color space
         if img_pixels.ndim == 2: # == gray
             img_pixels = skimage.color.gray2rgb(img_pixels)
@@ -39,8 +34,8 @@ class Learner:
         green_histogram = skimage.exposure.histogram(img_pixels[:, :, 1])[0]
         blue_histogram = skimage.exposure.histogram(img_pixels[:, :, 2])[0]
 
-        # Save histograms into the image's class index
-        file_name = 'index/' + img_class + '/' + img_name + '_rgb'
+        # Save histograms into the images' index
+        file_name = 'index/' + img_name + '_rgb'
         f = open(file_name + '.txt', 'w')
         for r, g, b in zip(red_histogram, green_histogram, blue_histogram):
             f.write(str(r) + '|' + str(g) + '|' + str(b) + '\n')
@@ -56,7 +51,7 @@ class Learner:
 
 
     # Learn image's oriented gradients histograms (HOG)
-    def learn_hog(self, img_name, img_class, img_pixels):
+    def learn_hog(self, img_name, img_pixels):
         # Convert RGB images' pixels to grayscale color space
         if img_pixels.ndim == 3: # == RGB
             img_pixels = skimage.color.rgb2gray(img_pixels)
@@ -65,7 +60,7 @@ class Learner:
         hog, hog_image = skimage.feature.hog(img_pixels, visualize = True)
 
         # Save HOG into the image's class index
-        file_name = 'index/' + img_class + '/' + img_name + '_hog'
+        file_name = 'index/' + img_name + '_hog'
         f = open(file_name + '.txt', 'w')
         f.write('|'.join([str(v) for v in hog]))
         f.close()
