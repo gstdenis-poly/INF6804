@@ -4,6 +4,7 @@ import os
 import skimage
 import sys
 
+
 class Learner:
     # Learn images database
     def learn(self, files):
