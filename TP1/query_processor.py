@@ -10,6 +10,7 @@ class Util:
     @staticmethod # Resize and pad given image to given dimensions
     def adjust_img(img, dimensions):
         adjusted_img = img
+        is_rgb = adjusted_img.ndim == 3
 
         # Reduce size of img if bigger than given dimensions
         img_width = np.ma.size(img, 1)
@@ -18,19 +19,23 @@ class Util:
             width_scale = dimensions[0] / img_width
             height_scale = dimensions[1] / img_height
             scale = width_scale if width_scale < height_scale else height_scale
-            # Scale has 3 dimensions for RGB and 2 dimensions for grayscale
-            scale = (scale, scale, 1) if adjusted_img.ndim == 3 else (scale, 1)
+            # Scale has 3 dimensions for RGB and 2 for grayscale
+            scale = (scale, scale, 1) if is_rgb else (scale, scale)
             adjusted_img = skimage.transform.rescale(img, scale, preserve_range = True)
 
         adjusted_img_width = np.ma.size(adjusted_img, 1)
         adjusted_img_height = np.ma.size(adjusted_img, 0)
 
         # Horizontal padding
-        padding_h = ((0, 0), (0, abs(adjusted_img_width - dimensions[0])), (0, 0))
+        diff_h = abs(adjusted_img_width - dimensions[0]) # Difference between query and ref widths
+        # Padding has 3 dimensions for RGB and 2 for grayscale
+        padding_h = ((0, 0), (0, diff_h), (0, 0)) if is_rgb else ((0, 0), (0, diff_h))
         if adjusted_img_width < dimensions[0]:
             adjusted_img = np.pad(adjusted_img, padding_h)
         # Vertical padding
-        padding_v = ((0, abs(adjusted_img_height - dimensions[1])), (0, 0), (0, 0))
+        diff_v = abs(adjusted_img_height - dimensions[1])
+        # Padding has 3 dimensions for RGB and 2 for grayscale
+        padding_v = ((0, diff_v), (0, 0), (0, 0)) if is_rgb else ((0, diff_v), (0, 0))
         if adjusted_img_height < dimensions[1]:
             adjusted_img = np.pad(adjusted_img, padding_v)
 
