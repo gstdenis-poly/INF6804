@@ -57,7 +57,7 @@ class Util:
     @staticmethod # Resize image to given dimensions
     def resize_img(img, dimensions):
         adjusted_img = skimage.transform.resize(img, 
-                                                (dimensions[0], dimensions[1]), 
+                                                (dimensions[1], dimensions[0]), 
                                                 anti_aliasing = True)
         # Convert the image to a 0-255 scale.
         adjusted_img = 255 * adjusted_img
