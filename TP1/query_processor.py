@@ -100,17 +100,17 @@ class Processor:
         # Print output of CBIR
         print('Images retrieved based on content (CBIR):\n')
         for histogram in query_histograms:
-            self.print_result(l1_norms, histogram, 'l1 norms')
-            self.print_result(l2_norms, histogram, 'l2 norms')
-            self.print_result(bhattacharyya, histogram, 'Bhattacharyya distance')
-            self.print_result(mdpa, histogram, 'Maximum difference of pair assignments')
-            self.print_result(cosine_sim, histogram, 'Cosine similarity')
+            self.print_result(l1_norms, histogram, 'l1 norms', 1)
+            self.print_result(l2_norms, histogram, 'l2 norms', 1)
+            self.print_result(bhattacharyya, histogram, 'Bhattacharyya distance', -1)
+            self.print_result(mdpa, histogram, 'Maximum difference of pair assignments', 1)
+            self.print_result(cosine_sim, histogram, 'Cosine similarity', -1)
 
 
     # Print result of CBIR
-    def print_result(self, result, histogram, comparison):
+    def print_result(self, result, histogram, comparison, sort_order):
         # Sort images by ascending value of comparison
-        sorted_result = sorted(result, key = lambda k: result[k][histogram])
+        sorted_result = sorted(result, key = lambda k: result[k][histogram] * sort_order)
 
         print(histogram.upper() + ' ' + comparison + ':')
         for img in sorted_result:    
