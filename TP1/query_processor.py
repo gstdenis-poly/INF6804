@@ -7,8 +7,19 @@ import sys
 
 
 class Util:
+    @staticmethod # Adjust image to given dimensions
+    def adjust_img(img, dimensions, keep_proportions):
+        adjusted_img = img
+        if keep_proportions:
+            adjusted_img = Util.pad_img(img, dimensions)
+        else:
+            adjusted_img = Util.resize_img(img, dimensions)
+
+        return adjusted_img
+
+
     @staticmethod # Resize and pad given image to given dimensions
-    def adjust_img(img, dimensions):
+    def pad_img(img, dimensions):
         adjusted_img = img
         is_rgb = adjusted_img.ndim == 3
 
@@ -21,8 +32,9 @@ class Util:
             scale = width_scale if width_scale < height_scale else height_scale
             # Scale has 3 dimensions for RGB and 2 for grayscale
             scale = (scale, scale, 1) if is_rgb else (scale, scale)
-            adjusted_img = skimage.transform.rescale(img, scale, preserve_range = True)
-
+            adjusted_img = skimage.transform.rescale(img, scale, 
+                                                     preserve_range = True, 
+                                                     anti_aliasing = True)
         adjusted_img_width = np.ma.size(adjusted_img, 1)
         adjusted_img_height = np.ma.size(adjusted_img, 0)
 
@@ -42,10 +54,25 @@ class Util:
         return adjusted_img
 
 
+    @staticmethod # Resize image to given dimensions
+    def resize_img(img, dimensions):
+        adjusted_img = skimage.transform.resize(img, 
+                                                (dimensions[0], dimensions[1]), 
+                                                anti_aliasing = True)
+        # Convert the image to a 0-255 scale.
+        adjusted_img = 255 * adjusted_img
+        # Convert to integer data type pixels.
+        adjusted_img = adjusted_img.astype(np.uint8)
+
+        return adjusted_img
+
+
 class Processor:
     index = {}
+    keep_proportions = False
 
-    def __init__(self, files):
+    def __init__(self, files, keep_proportions):
+        self.keep_proportions = keep_proportions
         for f in files:
             # Get file's name without its extension
             file_name = os.path.basename(f).split('.')[0]
@@ -88,7 +115,9 @@ class Processor:
         for img in self.index:
             ref = self.index[img] # histograms of image in index
             # Calculate query image's HOG because variable with images' size
-            hog = learner.calc_hog(Util.adjust_img(query_pixels, ref['dimensions']), False)
+            hog = learner.calc_hog(Util.adjust_img(query_pixels, 
+                                                   ref['dimensions'],
+                                                   self.keep_proportions), False)
             query_histograms['hog'] = np.array(hog)
             del self.index[img]['dimensions'] # Not needed anymore
             # Compare query with reference using different feature vector comparison
@@ -171,9 +200,9 @@ class Processor:
 
 # Program main function
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2 or 3 < len(sys.argv):
         print('ERROR: Wrong arguments (see -h)')
-    elif sys.argv[1] == '-h':
+    elif len(sys.argv) == 2 and sys.argv[1] == '-h':
         help = 'Processes a CBIR query by computing the RGB histograms and histograms of oriented\n' 
         help += 'gradients (HOG) of a given image and comparing them with an index of histograms\n'
         help += 'from previously learned images.\n'
@@ -198,6 +227,11 @@ if __name__ == '__main__':
         help += 'Usage: query_processor.py image\n'
         help += 'Arguments:\n'
         help += '   image:       Represents the path to the image to use for CBIR query.\n'
+        help += '   -p:          Indicates if proportions of the image must be kept. If this\n'
+        help += '                argument is specified, the given image is resized then padded\n'
+        help += '                to fit the size of the compared database images. If not\n'
+        help += '                specified, the image is resized to fit the size of the compared\n'
+        help += '                database images even if it breaks its proportions.\n'
         help += '\n'
         help += 'Example (assuming the index contains the histograms of only cat_2 and cat_5 images):\n'
         help += '   Input: query_processor.py ./airplane_query.jpg\n'
@@ -263,5 +297,6 @@ if __name__ == '__main__':
 
                 files = files + [file_path]
 
-            processor = Processor(files)
+            keep_proportions = len(sys.argv) == 3 and sys.argv[2] == '-p'
+            processor = Processor(files, keep_proportions)
             processor.process(query)
