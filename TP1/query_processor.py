@@ -16,11 +16,11 @@ class Util:
             adjusted_img = Util.resize_img(img, dimensions)
 
         # Save adjusted image into an output directory
-        #if not os.path.exists('output'):
-            #os.mkdir('output')
+        if not os.path.exists('output'):
+            os.mkdir('output')
 
-        #suffix = 'pad' if keep_proportions else '' # Suffix to output image file
-        #skimage.io.imsave('output/' + img_name + '_' + suffix + '.png', adjusted_img)
+        suffix = 'pad' if keep_proportions else '' # Suffix to output image file
+        skimage.io.imsave('output/' + img_name + '_' + suffix + '.png', adjusted_img)
 
         return adjusted_img
 
