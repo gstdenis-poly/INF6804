@@ -8,12 +8,19 @@ import sys
 
 class Util:
     @staticmethod # Adjust image to given dimensions
-    def adjust_img(img, dimensions, keep_proportions):
+    def adjust_img(img_name, img, dimensions, keep_proportions):
         adjusted_img = img
         if keep_proportions:
             adjusted_img = Util.pad_img(img, dimensions)
         else:
             adjusted_img = Util.resize_img(img, dimensions)
+
+        # Save adjusted image into an output directory
+        if not os.path.exists('output'):
+            os.mkdir('output')
+
+        suffix = 'pad' if keep_proportions else '' # Suffix to output image file
+        skimage.io.imsave('output/' + img_name + '_' + suffix + '.png', adjusted_img)
 
         return adjusted_img
 
@@ -104,6 +111,8 @@ class Processor:
 
     # Process CBIR
     def process(self, query):
+        # Get query image's name without its extension
+        query_img_name = os.path.basename(query).split('.')[0]
         # Query's image is read as a matrix of pixels
         query_pixels = skimage.io.imread(query)
         # Calculate query image's RGB histograms because invariant to images' size
@@ -115,7 +124,8 @@ class Processor:
         for img in self.index:
             ref = self.index[img] # histograms of image in index
             # Calculate query image's HOG because variable with images' size
-            hog = learner.calc_hog(Util.adjust_img(query_pixels, 
+            hog = learner.calc_hog(Util.adjust_img(query_img_name + '-' + img,
+                                                   query_pixels, 
                                                    ref['dimensions'],
                                                    self.keep_proportions), False)
             query_histograms['hog'] = np.array(hog)
@@ -127,7 +137,7 @@ class Processor:
             mdpa[img] = self.process_mdpa(query_histograms, ref)
             cosine_sim[img] = self.process_cosine_sim(query_histograms, ref)
         # Print output of CBIR
-        print('Images retrieved based on content (CBIR):\n')
+        print('\nImages retrieved based on content (CBIR):\n')
         for histogram in query_histograms:
             self.print_result(l1_norms, histogram, 'l1 norms', 1)
             self.print_result(l2_norms, histogram, 'l2 norms', 1)
