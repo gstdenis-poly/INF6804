@@ -16,11 +16,11 @@ class Util:
             adjusted_img = Util.resize_img(img, dimensions)
 
         # Save adjusted image into an output directory
-        if not os.path.exists('output'):
-            os.mkdir('output')
+        #if not os.path.exists('output'):
+            #os.mkdir('output')
 
-        suffix = 'pad' if keep_proportions else '' # Suffix to output image file
-        skimage.io.imsave('output/' + img_name + '_' + suffix + '.png', adjusted_img)
+        #suffix = 'pad' if keep_proportions else '' # Suffix to output image file
+        #skimage.io.imsave('output/' + img_name + '_' + suffix + '.png', adjusted_img)
 
         return adjusted_img
 
@@ -113,6 +113,8 @@ class Processor:
     def process(self, query):
         # Get query image's name without its extension
         query_img_name = os.path.basename(query).split('.')[0]
+        # Get query's prefix as the query's class
+        query_class = query_img_name.split('_')[0]
         # Query's image is read as a matrix of pixels
         query_pixels = skimage.io.imread(query)
         # Calculate query image's RGB histograms because invariant to images' size
@@ -120,7 +122,7 @@ class Processor:
         r, g, b = learner.calc_rgb(query_pixels)
         query_histograms = { 'rgb': np.vstack((r, g, b)).T }
         # Calculate feature vector comparisons
-        l1_norms, l2_norms, bhattacharyya, mdpa, cosine_sim = {}, {}, {}, {}, {}
+        l1_norms, l2_norms, bhattacharyya, mdpa, cosine = {}, {}, {}, {}, {}
         for img in self.index:
             ref = self.index[img] # histograms of image in index
             # Calculate query image's HOG because variable with images' size
@@ -135,26 +137,47 @@ class Processor:
             l2_norms[img] = self.process_lp_norms(query_histograms, ref, 2)
             bhattacharyya[img] = self.process_bhattacharyya(query_histograms, ref)
             mdpa[img] = self.process_mdpa(query_histograms, ref)
-            cosine_sim[img] = self.process_cosine_sim(query_histograms, ref)
+            cosine[img] = self.process_cosine(query_histograms, ref)
         # Print output of CBIR
         print('\nImages retrieved based on content (CBIR):\n')
         for histogram in query_histograms:
-            self.print_result(l1_norms, histogram, 'l1 norms', 1)
-            self.print_result(l2_norms, histogram, 'l2 norms', 1)
-            self.print_result(bhattacharyya, histogram, 'Bhattacharyya distance', -1)
-            self.print_result(mdpa, histogram, 'Maximum difference of pair assignments', 1)
-            self.print_result(cosine_sim, histogram, 'Cosine similarity', -1)
+            self.print_result(query_class, l1_norms, histogram, 'l1 norms')
+            self.print_result(query_class, l2_norms, histogram, 'l2 norms')
+            self.print_result(query_class, bhattacharyya, histogram, 'Bhattacharyya distance')
+            self.print_result(query_class, mdpa, histogram, 'Maximum difference of pair assignments')
+            self.print_result(query_class, cosine, histogram, 'Cosine similarity')
 
 
     # Print result of CBIR
-    def print_result(self, result, histogram, comparison, sort_order):
+    def print_result(self, query_class, result, histogram, comparison):
         # Sort images by ascending value of comparison
-        sorted_result = sorted(result, key = lambda k: result[k][histogram] * sort_order)
+        sorted_result = sorted(result, key = lambda k: result[k][histogram])
+
+        true_positives_counter = 0
+        expected_positives_counter = 0
+        average_precision_3 = 0
+        average_precision_5 = 0
 
         print(histogram.upper() + ' ' + comparison + ':')
         for img in sorted_result:    
             print(img + ': ' + str(result[img][histogram]))
+            
+            expected_positives_counter += 1
+            current_recall = 0
+            if query_class == img.split('_')[0]: # Query and index images have same class
+                true_positives_counter += 1
+                current_recall = true_positives_counter / expected_positives_counter
 
+            if expected_positives_counter <= 5:
+                average_precision_5 += current_recall
+            if expected_positives_counter <= 3:
+                average_precision_3 += current_recall
+
+        average_precision_5 = (1 / 5) * average_precision_5
+        average_precision_3 = (1 / 3) * average_precision_3
+
+        print('Performance of CBIR query for top 5 retrieved images: ' + str(average_precision_5))
+        print('Performance of CBIR query for top 3 retrieved images: ' + str(average_precision_3))
         print('\n')
 
 
@@ -195,8 +218,8 @@ class Processor:
         return mdpa
 
 
-    # Calculate cosine similarity
-    def process_cosine_sim(self, query, reference):
+    # Calculate cosine distance
+    def process_cosine(self, query, reference):
         cosine = {}
         for histogram in query:
             # Convert Numpy histograms to Python lists for Scipy
@@ -245,7 +268,8 @@ if __name__ == '__main__':
         help += '\n'
         help += 'Example (assuming the index contains the histograms of only cat_2 and cat_5 images):\n'
         help += '   Input: query_processor.py ./airplane_query.jpg\n'
-        help += '   Ouput:\n'
+        help += '   Output 1: output directory containing all adjusted images for HOG calculation.\n'
+        help += '   Output 2:\n'
         help += '      Images retrieved based on content (CBIR):\n'
         help += '\n'
         help += '      RGB l1 norms:\n'
