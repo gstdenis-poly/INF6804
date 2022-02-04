@@ -77,9 +77,11 @@ class Util:
 class Processor:
     index = {}
     keep_proportions = False
+    use_thresholds = False
 
-    def __init__(self, files, keep_proportions):
+    def __init__(self, files, keep_proportions, use_thresholds):
         self.keep_proportions = keep_proportions
+        self.use_thresholds = use_thresholds
         for f in files:
             # Get file's name without its extension
             file_name = os.path.basename(f).split('.')[0]
@@ -159,8 +161,14 @@ class Processor:
         average_precision_5 = 0
 
         print(histogram.upper() + ' ' + comparison + ':')
-        for img in sorted_result:    
-            print(img + ': ' + str(result[img][histogram]))
+        for img in sorted_result:
+            distance = result[img][histogram]
+            if not self.use_thresholds or \
+               histogram == 'rgb' and comparison == 'Bhattacharyya distance' and distance < 0.26 or \
+               histogram == 'rgb' and comparison == 'Cosine similarity' and distance < 0.08 or \
+               histogram == 'hog' and comparison == 'Bhattacharyya distance' and distance < 0.44 or \
+               histogram == 'hog' and comparison == 'Cosine similarity' and distance < 0.71:
+                print(img + ': ' + str(distance))
             
             expected_positives_counter += 1
             current_recall = 0
@@ -233,7 +241,7 @@ class Processor:
 
 # Program main function
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or 3 < len(sys.argv):
+    if len(sys.argv) < 2 or 4 < len(sys.argv):
         print('ERROR: Wrong arguments (see -h)')
     elif len(sys.argv) == 2 and sys.argv[1] == '-h':
         help = 'Processes a CBIR query by computing the RGB histograms and histograms of oriented\n' 
@@ -265,6 +273,8 @@ if __name__ == '__main__':
         help += '                to fit the size of the compared database images. If not\n'
         help += '                specified, the image is resized to fit the size of the compared\n'
         help += '                database images even if it breaks its proportions.\n'
+        help += '   -t           Indicates if thresholds must be used to avoid returning images\n'
+        help += '                that are not enough similar according to fixed thresholds.\n'
         help += '\n'
         help += 'Example (assuming the index contains the histograms of only cat_2 and cat_5 images):\n'
         help += '   Input: query_processor.py ./airplane_query.jpg\n'
@@ -331,6 +341,9 @@ if __name__ == '__main__':
 
                 files = files + [file_path]
 
-            keep_proportions = len(sys.argv) == 3 and sys.argv[2] == '-p'
-            processor = Processor(files, keep_proportions)
+            keep_proportions = len(sys.argv) == 3 and sys.argv[2] == '-p' or \
+                               len(sys.argv) == 4 and (sys.argv[2] == '-p' or sys.argv[3] == '-p')
+            use_thresholds = len(sys.argv) == 3 and sys.argv[2] == '-t' or \
+                             len(sys.argv) == 4 and (sys.argv[2] == '-t' or sys.argv[3] == '-t')
+            processor = Processor(files, keep_proportions, use_thresholds)
             processor.process(query)
