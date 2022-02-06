@@ -271,11 +271,11 @@ if __name__ == '__main__':
         help += 'Usage: query_processor.py image\n'
         help += 'Arguments:\n'
         help += '   image:       Represents the path to the image to use for CBIR query.\n'
-        help += '   -p:          Indicates if proportions of the image must be kept. If this\n'
-        help += '                argument is specified, the given image is resized then padded\n'
-        help += '                to fit the size of the compared database images. If not\n'
-        help += '                specified, the image is resized to fit the size of the compared\n'
-        help += '                database images even if it breaks its proportions.\n'
+        help += '   -p:          Indicates if proportions of the image can be modified. If this\n'
+        help += '                argument is specified, the given image is resized to fit the size\n'
+        help += '                of the compared database images even if it breaks its proportions.\n'
+        help += '                If not specified, the image is resized then padded to fit the size\n'
+        help += '                of the compared database images.\n'
         help += '   -t           Indicates if thresholds must be used to avoid returning images\n'
         help += '                that are not enough similar according to fixed thresholds.\n'
         help += '\n'
@@ -344,8 +344,8 @@ if __name__ == '__main__':
 
                 files = files + [file_path]
 
-            keep_proportions = len(sys.argv) == 3 and sys.argv[2] == '-p' or \
-                               len(sys.argv) == 4 and (sys.argv[2] == '-p' or sys.argv[3] == '-p')
+            keep_proportions = not (len(sys.argv) == 3 and sys.argv[2] == '-p' or \
+                                    len(sys.argv) == 4 and (sys.argv[2] == '-p' or sys.argv[3] == '-p'))
             use_thresholds = len(sys.argv) == 3 and sys.argv[2] == '-t' or \
                              len(sys.argv) == 4 and (sys.argv[2] == '-t' or sys.argv[3] == '-t')
             processor = Processor(files, keep_proportions, use_thresholds)
