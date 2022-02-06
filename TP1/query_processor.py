@@ -162,6 +162,8 @@ class Processor:
 
         print(histogram.upper() + ' ' + comparison + ':')
         for img in sorted_result:
+            expected_positives_counter += 1
+
             distance = result[img][histogram]
             if not self.use_thresholds or \
                histogram == 'rgb' and comparison == 'Bhattacharyya distance' and distance < 0.26 or \
@@ -169,8 +171,9 @@ class Processor:
                histogram == 'hog' and comparison == 'Bhattacharyya distance' and distance < 0.44 or \
                histogram == 'hog' and comparison == 'Cosine similarity' and distance < 0.71:
                 print(img + ': ' + str(distance))
+            else:
+                continue
             
-            expected_positives_counter += 1
             current_recall = 0
             if query_class == img.split('_')[0]: # Query and index images have same class
                 true_positives_counter += 1
