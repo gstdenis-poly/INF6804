@@ -78,9 +78,9 @@ int correlation_forward_cuda(at::Tensor& input1, at::Tensor& input2, at::Tensor&
   );
 
   //check for errors
-  if (!success) {
-    AT_ERROR("CUDA call failed");
-  }
+  //if (!success) {
+  //  AT_ERROR("CUDA call failed");
+  //}
 
   return 1;
 
@@ -159,9 +159,9 @@ int correlation_backward_cuda(at::Tensor& input1, at::Tensor& input2, at::Tensor
                                                 //at::globalContext().getCurrentCUDAStream()
                                                );
 
-  if (!success) {
-    AT_ERROR("CUDA call failed");
-  }
+  //if (!success) {
+  //  AT_ERROR("CUDA call failed");
+  //}
 
   return 1;
 }
