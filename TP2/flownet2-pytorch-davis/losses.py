@@ -15,6 +15,8 @@ class L1(nn.Module):
     def __init__(self):
         super(L1, self).__init__()
     def forward(self, output, target):
+        print(output)
+        print(target)
         lossvalue = torch.abs(output - target).mean()
         return lossvalue
 
