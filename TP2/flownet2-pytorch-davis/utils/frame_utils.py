@@ -8,6 +8,7 @@ def read_gen(file_name):
     ext = splitext(file_name)[-1]
     if ext == '.png' or ext == '.jpeg' or ext == '.ppm' or ext == '.jpg':
         im = imread(file_name)
+        print(im)
         if im.ndim < 3:
           im = gray2rgb(im)
 
