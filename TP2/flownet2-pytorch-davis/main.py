@@ -259,9 +259,8 @@ if __name__ == '__main__':
             progress = tqdm(tools.IteratorTimer(data_loader), ncols=120, total=np.minimum(len(data_loader), args.train_n_batches), smoothing=.9, miniters=1, leave=True, position=offset, desc=title)
 
         last_log_time = progress._time()
+        batch_idx = 0
         for batch_idx, (data, target) in enumerate(progress):
-            print('\n\n' + batch_idx + '\n\n')
-
             data, target = [Variable(d) for d in data], [Variable(t) for t in target]
             if args.cuda and args.number_gpus == 1:
                 data, target = [d.cuda(non_blocking=True) for d in data], [t.cuda(non_blocking=True) for t in target]
