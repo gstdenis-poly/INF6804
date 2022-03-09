@@ -260,7 +260,7 @@ if __name__ == '__main__':
 
         last_log_time = progress._time()
         for batch_idx, (data, target) in enumerate(progress):
-            print(batch_idx)
+            print('\n\n' + batch_idx + '\n\n')
 
             data, target = [Variable(d) for d in data], [Variable(t) for t in target]
             if args.cuda and args.number_gpus == 1:
