@@ -185,6 +185,7 @@ with torch.no_grad():  # PyTorch 0.4.0 style
             pred = np.transpose(outputs[-1].cpu().data.numpy()[jj, :, :, :], (1, 2, 0))
             pred = 1 / (1 + np.exp(-pred))
             pred = np.squeeze(pred)
+            pred = pred.astype(np.uint8)
 
             # Save the result, attention to the index jj
             imwrite(os.path.join(save_dir_res, os.path.basename(fname[jj]) + '.png'), pred)
