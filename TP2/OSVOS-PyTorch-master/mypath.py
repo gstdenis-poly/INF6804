@@ -8,7 +8,7 @@ class Path(PathAbstract):
 
     @staticmethod
     def save_root_dir():
-        return '/content/drive/MyDrive/OSVOS'
+        return './models'
 
     @staticmethod
     def models_dir():
