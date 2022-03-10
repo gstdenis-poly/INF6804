@@ -1,0 +1,14 @@
+.idea/
+*.gv
+*.pdf
+models/*.pth
+models/runs/*
+runs/*
+*.pth
+*.pyc
+params.py
+*.mat
+*.txt
+cluster/script.sh
+cluster/train_parent.sh
+experiments/
