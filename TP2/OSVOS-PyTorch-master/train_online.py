@@ -45,7 +45,7 @@ parentEpoch = 240
 
 # Parameters in p are used for the name of the model
 p = {
-    'trainBatch': 0,  # Number of Images in each mini-batch
+    'trainBatch': 1,  # Number of Images in each mini-batch
     }
 seed = 0
 
@@ -107,7 +107,7 @@ num_img_ts = len(testloader)
 loss_tr = []
 aveGrad = 0
 
-print("Start of Online Training, sequence: " + seq_name)
+"""print("Start of Online Training, sequence: " + seq_name)
 start_time = timeit.default_timer()
 # Main Training and Testing Loop
 for epoch in range(0, nEpochs):
@@ -154,7 +154,7 @@ for epoch in range(0, nEpochs):
         torch.save(net.state_dict(), os.path.join(save_dir, seq_name + '_epoch-'+str(epoch) + '.pth'))
 
 stop_time = timeit.default_timer()
-print('Online training time: ' + str(stop_time - start_time))
+print('Online training time: ' + str(stop_time - start_time))"""
 
 
 # Testing Phase
