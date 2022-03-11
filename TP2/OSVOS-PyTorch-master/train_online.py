@@ -45,7 +45,7 @@ parentEpoch = 240
 
 # Parameters in p are used for the name of the model
 p = {
-    'trainBatch': 1,  # Number of Images in each mini-batch
+    'trainBatch': 0,  # Number of Images in each mini-batch
     }
 seed = 0
 
@@ -55,7 +55,7 @@ gpu_id = -1
 device = torch.device("cuda:"+str(gpu_id) if torch.cuda.is_available() else "cpu")
 
 # Network definition
-net = vo.OSVOS(pretrained=0)
+net = vo.OSVOS(pretrained=1)
 net.load_state_dict(torch.load(os.path.join(save_dir, parentModelName+'_epoch-'+str(parentEpoch-1)+'.pth'),
                                map_location=lambda storage, loc: storage))
 
