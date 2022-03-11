@@ -57,7 +57,7 @@ seed = 0
 
 parentModelName = 'parent'
 # Select which GPU, -1 if CPU
-gpu_id = -1
+gpu_id = 0
 device = torch.device("cuda:"+str(gpu_id) if torch.cuda.is_available() else "cpu")
 
 # Network definition
