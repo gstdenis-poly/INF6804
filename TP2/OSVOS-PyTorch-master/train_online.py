@@ -39,7 +39,7 @@ if not os.path.exists(save_dir):
 vis_net = 0  # Visualize the network?
 vis_res = 1  # Visualize the results?
 nAveGrad = 5  # Average the gradient every nAveGrad iterations
-nEpochs = 2 * nAveGrad  # Number of epochs for training
+nEpochs = 5 * nAveGrad  # Number of epochs for training
 snapshot = nEpochs  # Store a model every snapshot epochs
 parentEpoch = 240
 
