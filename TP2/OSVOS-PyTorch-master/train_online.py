@@ -107,7 +107,7 @@ num_img_ts = len(testloader)
 loss_tr = []
 aveGrad = 0
 
-if 'TRAIN' in os.environ.keys() and os.environ['TRAIN'] == 1:
+if 'TRAIN' in os.environ.keys() and os.environ['TRAIN'] != '':
     print("Start of Online Training, sequence: " + seq_name)
     start_time = timeit.default_timer()
     # Main Training and Testing Loop
