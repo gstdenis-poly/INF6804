@@ -30,6 +30,12 @@ if 'SEQ_NAME' not in os.environ.keys():
 else:
     seq_name = str(os.environ['SEQ_NAME'])
 
+train_seq = None
+if 'TRAIN_SEQ' in os.environ.keys():
+    train_seq = str(os.environ['TRAIN_SEQ'])
+    if train_seq == '':
+        train_seq = seq_name
+
 db_root_dir = Path.db_root_dir()
 save_dir = Path.save_root_dir()
 
@@ -94,7 +100,7 @@ composed_transforms = transforms.Compose([tr.RandomHorizontalFlip(),
                                           tr.ScaleNRotate(rots=(-30, 30), scales=(.75, 1.25)),
                                           tr.ToTensor()])
 # Training dataset and its iterator
-db_train = db.DAVIS2016(train=True, db_root_dir=db_root_dir, transform=composed_transforms, seq_name=seq_name)
+db_train = db.DAVIS2016(train=True, db_root_dir=db_root_dir, transform=composed_transforms, seq_name=train_seq)
 trainloader = DataLoader(db_train, batch_size=p['trainBatch'], shuffle=True, num_workers=1)
 
 # Testing dataset and its iterator
@@ -108,7 +114,7 @@ loss_tr = []
 aveGrad = 0
 
 if 'TRAIN' in os.environ.keys() and os.environ['TRAIN'] != '':
-    print("Start of Online Training, sequence: " + seq_name)
+    print("Start of Online Training, sequence: " + train_seq)
     start_time = timeit.default_timer()
     # Main Training and Testing Loop
     for epoch in range(0, nEpochs):
@@ -152,7 +158,7 @@ if 'TRAIN' in os.environ.keys() and os.environ['TRAIN'] != '':
 
         # Save the model
         if (epoch % snapshot) == snapshot - 1 and epoch != 0:
-            torch.save(net.state_dict(), os.path.join(save_dir, seq_name + '_epoch-'+str(epoch) + '.pth'))
+            torch.save(net.state_dict(), os.path.join(save_dir, train_seq + '_epoch-'+str(epoch) + '.pth'))
 
     stop_time = timeit.default_timer()
     print('Online training time: ' + str(stop_time - start_time))
