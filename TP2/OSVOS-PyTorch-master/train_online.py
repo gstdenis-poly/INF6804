@@ -107,54 +107,55 @@ num_img_ts = len(testloader)
 loss_tr = []
 aveGrad = 0
 
-"""print("Start of Online Training, sequence: " + seq_name)
-start_time = timeit.default_timer()
-# Main Training and Testing Loop
-for epoch in range(0, nEpochs):
-    # One training epoch
-    running_loss_tr = 0
-    np.random.seed(seed + epoch)
-    for ii, sample_batched in enumerate(trainloader):
+if 'TRAIN' in os.environ.keys() and os.environ['TRAIN'] == 1:
+    print("Start of Online Training, sequence: " + seq_name)
+    start_time = timeit.default_timer()
+    # Main Training and Testing Loop
+    for epoch in range(0, nEpochs):
+        # One training epoch
+        running_loss_tr = 0
+        np.random.seed(seed + epoch)
+        for ii, sample_batched in enumerate(trainloader):
 
-        inputs, gts = sample_batched['image'], sample_batched['gt']
+            inputs, gts = sample_batched['image'], sample_batched['gt']
 
-        # Forward-Backward of the mini-batch
-        inputs.requires_grad_()
-        inputs, gts = inputs.to(device), gts.to(device)
+            # Forward-Backward of the mini-batch
+            inputs.requires_grad_()
+            inputs, gts = inputs.to(device), gts.to(device)
 
-        outputs = net.forward(inputs)
+            outputs = net.forward(inputs)
 
-        # Compute the fuse loss
-        loss = class_balanced_cross_entropy_loss(outputs[-1], gts, size_average=False)
-        running_loss_tr += loss.item()  # PyTorch 0.4.0 style
+            # Compute the fuse loss
+            loss = class_balanced_cross_entropy_loss(outputs[-1], gts, size_average=False)
+            running_loss_tr += loss.item()  # PyTorch 0.4.0 style
 
-        # Print stuff
-        if epoch % (nEpochs//20) == (nEpochs//20 - 1):
-            running_loss_tr /= num_img_tr
-            loss_tr.append(running_loss_tr)
+            # Print stuff
+            if epoch % (nEpochs//20) == (nEpochs//20 - 1):
+                running_loss_tr /= num_img_tr
+                loss_tr.append(running_loss_tr)
 
-            print('[Epoch: %d, numImages: %5d]' % (epoch+1, ii + 1))
-            print('Loss: %f' % running_loss_tr)
-            writer.add_scalar('data/total_loss_epoch', running_loss_tr, epoch)
+                print('[Epoch: %d, numImages: %5d]' % (epoch+1, ii + 1))
+                print('Loss: %f' % running_loss_tr)
+                writer.add_scalar('data/total_loss_epoch', running_loss_tr, epoch)
 
-        # Backward the averaged gradient
-        loss /= nAveGrad
-        loss.backward()
-        aveGrad += 1
+            # Backward the averaged gradient
+            loss /= nAveGrad
+            loss.backward()
+            aveGrad += 1
 
-        # Update the weights once in nAveGrad forward passes
-        if aveGrad % nAveGrad == 0:
-            writer.add_scalar('data/total_loss_iter', loss.item(), ii + num_img_tr * epoch)
-            optimizer.step()
-            optimizer.zero_grad()
-            aveGrad = 0
+            # Update the weights once in nAveGrad forward passes
+            if aveGrad % nAveGrad == 0:
+                writer.add_scalar('data/total_loss_iter', loss.item(), ii + num_img_tr * epoch)
+                optimizer.step()
+                optimizer.zero_grad()
+                aveGrad = 0
 
-    # Save the model
-    if (epoch % snapshot) == snapshot - 1 and epoch != 0:
-        torch.save(net.state_dict(), os.path.join(save_dir, seq_name + '_epoch-'+str(epoch) + '.pth'))
+        # Save the model
+        if (epoch % snapshot) == snapshot - 1 and epoch != 0:
+            torch.save(net.state_dict(), os.path.join(save_dir, seq_name + '_epoch-'+str(epoch) + '.pth'))
 
-stop_time = timeit.default_timer()
-print('Online training time: ' + str(stop_time - start_time))"""
+    stop_time = timeit.default_timer()
+    print('Online training time: ' + str(stop_time - start_time))
 
 
 # Testing Phase
