@@ -128,9 +128,9 @@ if __name__ == '__main__':
 
     # Dynamically load the dataset class with parameters passed in via "--argument_[param]=[value]" arguments
     with tools.TimerBlock("Initializing Datasets") as block:
-        args.effective_batch_size = args.batch_size
-        args.effective_inference_batch_size = args.inference_batch_size
-        args.effective_number_workers = args.number_workers
+        args.effective_batch_size = args.batch_size * args.number_gpus
+        args.effective_inference_batch_size = args.inference_batch_size * args.number_gpus
+        args.effective_number_workers = args.number_workers * args.number_gpus
         gpuargs = {'num_workers': args.effective_number_workers, 
                    'pin_memory': True, 
                    'drop_last' : True} if args.cuda else {}
