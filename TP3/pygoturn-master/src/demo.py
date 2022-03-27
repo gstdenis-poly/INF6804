@@ -74,7 +74,8 @@ def main(args):
     else:
         os.makedirs(args.save_directory)
     # save initial frame with bounding box
-    save(tester.img[0][0], tester.prev_rect, tester.prev_rect, 1)
+    # save(tester.img[0][0], tester.prev_rect, tester.prev_rect, 1)
+    save(tester.img[0][0], tester.prev_rect, 1)
     tester.model.eval()
 
     # loop through sequence images
