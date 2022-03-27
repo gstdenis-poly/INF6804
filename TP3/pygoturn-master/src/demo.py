@@ -79,7 +79,7 @@ def main(args):
     tester.model.eval()
 
     # loop through sequence images
-    for i in range(tester.index, tester.length):
+    for i in range(tester.idx, tester.len):
         # get torch input tensor
         sample = tester[i]
 

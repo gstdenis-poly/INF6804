@@ -54,7 +54,7 @@ class GOTURN:
         init_bbox = np.array(init_bbox)
         self.prev_rect = init_bbox
         self.img = []
-        for i in range(self.index, self.length):
+        for i in range(self.idx, self.len):
             self.x.append([frames[i], frames[i+1]])
             img_prev = cv2.imread(frames[i])
             img_prev = bgr2rgb(img_prev)
@@ -114,7 +114,7 @@ class GOTURN:
         """
         self.model.eval()
         st = time.time()
-        for i in range(self.index, self.length):
+        for i in range(self.idx, self.len):
             sample = self[i]
             bb = self.get_rect(sample)
             self.prev_rect = bb
