@@ -39,7 +39,7 @@ class GOTURN:
         frames = os.listdir(root_dir + '/frames')
         frames = [root_dir + "/frames/" + frame for frame in frames]
         self.idx = idx
-        self.len = len
+        self.len = min(len, idx + len(frames)) - 1
         frames = np.array(frames)
         frames.sort()
         self.x = []
