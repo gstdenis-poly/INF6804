@@ -69,6 +69,7 @@ def main(args):
     tester = GOTURN(args.data_directory,
                     args.model_weights,
                     device)
+    print('TEST')
     if os.path.exists(args.save_directory):
         print('Save directory %s already exists' % (args.save_directory))
     else:
