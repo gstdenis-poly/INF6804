@@ -16,6 +16,12 @@ parser.add_argument('-d', '--data-directory',
 parser.add_argument('-s', '--save-directory',
                     default='../result',
                     type=str, help='path to save directory')
+parser.add_argument('-i', '--index',
+                    default=0,
+                    type=int, help='index of starting frame')
+parser.add_argument('-l', '--length',
+                    default=800,
+                    type=int, help='number of frames')
 
 
 def axis_aligned_iou(boxA, boxB):
@@ -61,7 +67,7 @@ def save(im, bb, idx):
 def main(args):
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
-    tester = GOTURN(args.data_directory,
+    tester = GOTURN(args.data_directory, args.idx, args.len,
                     args.model_weights,
                     device)
     if os.path.exists(args.save_directory):
@@ -73,7 +79,7 @@ def main(args):
     tester.model.eval()
 
     # loop through sequence images
-    for i in range(tester.len):
+    for i in range(tester.idx, tester.len):
         # get torch input tensor
         sample = tester[i]
 
@@ -81,7 +87,7 @@ def main(args):
         bb = tester.get_rect(sample)
         tester.prev_rect = bb
 
-        # save current image with predicted rectangle and gt box
+        # save current image with predicted rectangle
         im = tester.img[i][1]
         save(im, bb, i+2)
 
