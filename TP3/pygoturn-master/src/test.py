@@ -32,10 +32,14 @@ class GOTURN:
         self.gt = []
         self.opts = None
         self.curr_img = None
+        print('TEST 1')
         checkpoint = torch.load(
             model_path, map_location=lambda storage, loc: storage)
+        print('TEST 2')
         self.model.load_state_dict(checkpoint['state_dict'])
+        print('TEST 3')
         self.model.to(device)
+        print('TEST 4')
         frames = os.listdir(root_dir + '/img')
         frames = [root_dir + "/img/" + frame for frame in frames]
         self.len = len(frames)-1
