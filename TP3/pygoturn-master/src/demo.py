@@ -67,7 +67,7 @@ def save(im, bb, idx):
 def main(args):
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
-    tester = GOTURN(args.data_directory, args.idx, args.len,
+    tester = GOTURN(args.data_directory, args.index, args.length,
                     args.model_weights,
                     device)
     if os.path.exists(args.save_directory):
