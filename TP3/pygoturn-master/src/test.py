@@ -51,7 +51,6 @@ class GOTURN:
         init_bbox = [init_bbox[0], init_bbox[1], init_bbox[0]+init_bbox[2],
                      init_bbox[1] + init_bbox[3]]
         init_bbox = np.array(init_bbox)
-        print(init_bbox)
         self.prev_rect = init_bbox
         self.img = []
         for i in range(self.len):
@@ -68,6 +67,7 @@ class GOTURN:
             bb = [bb[0], bb[1], bb[0]+bb[2], bb[1]+bb[3]]
             self.gt.append(bb)"""
         self.x = np.array(self.x)
+        print(init_bbox)
         print(init_bbox)
 
     def __getitem__(self, idx):
