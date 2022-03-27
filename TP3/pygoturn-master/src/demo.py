@@ -64,9 +64,9 @@ def save(im, bb, gt_bb, idx):
 
 
 def main(args):
-    print('TEST')
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
+    print('TEST')
     tester = GOTURN(args.data_directory,
                     args.model_weights,
                     device)
