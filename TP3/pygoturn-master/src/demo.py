@@ -48,16 +48,17 @@ def axis_aligned_iou(boxA, boxB):
     return iou
 
 
+#def save(im, bb, gt_bb, idx):
 def save(im, bb, gt_bb, idx):
     im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)
     bb = [int(val) for val in bb]  # GOTURN output
-    gt_bb = [int(val) for val in gt_bb]  # groundtruth box
+    #gt_bb = [int(val) for val in gt_bb]  # groundtruth box
     # plot GOTURN predictions with red rectangle
     im = cv2.rectangle(im, (bb[0], bb[1]), (bb[2], bb[3]),
                        (0, 0, 255), 2)
     # plot annotations with white rectangle
-    im = cv2.rectangle(im, (gt_bb[0], gt_bb[1]), (gt_bb[2], gt_bb[3]),
-                       (255, 255, 255), 2)
+    #im = cv2.rectangle(im, (gt_bb[0], gt_bb[1]), (gt_bb[2], gt_bb[3]),
+    #                   (255, 255, 255), 2)
     save_path = os.path.join(args.save_directory, str(idx)+'.jpg')
     cv2.imwrite(save_path, im)
 
@@ -83,16 +84,17 @@ def main(args):
 
         # predict box
         bb = tester.get_rect(sample)
-        gt_bb = tester.gt[i]
+        #gt_bb = tester.gt[i]
         tester.prev_rect = bb
 
         # save current image with predicted rectangle and gt box
         im = tester.img[i][1]
-        save(im, bb, gt_bb, i+2)
+        #save(im, bb, gt_bb, i+2)
+        save(im, bb, i+2)
 
         # print stats
-        print('frame: %d, IoU = %f' % (
-            i+2, axis_aligned_iou(gt_bb, bb)))
+        #print('frame: %d, IoU = %f' % (
+            #i+2, axis_aligned_iou(gt_bb, bb)))
 
 
 if __name__ == "__main__":
