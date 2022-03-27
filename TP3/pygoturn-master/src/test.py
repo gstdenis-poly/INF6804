@@ -22,7 +22,7 @@ parser.add_argument('-d', '--data-directory',
 
 class GOTURN:
     """Tester for OTB formatted sequences"""
-    def __init__(self, root_dir, idx, len, model_path, device):
+    def __init__(self, root_dir, index, length, model_path, device):
         self.root_dir = root_dir
         self.device = device
         self.transform = NormalizeToTensor()
@@ -38,8 +38,8 @@ class GOTURN:
         self.model.to(device)
         frames = os.listdir(root_dir + '/frames')
         frames = [root_dir + "/frames/" + frame for frame in frames]
-        self.idx = idx
-        self.len = min(len, idx + len(frames)) - 1
+        self.idx = index
+        self.len = min(length, index + len(frames)) - 1
         frames = np.array(frames)
         frames.sort()
         self.x = []
@@ -54,7 +54,7 @@ class GOTURN:
         init_bbox = np.array(init_bbox)
         self.prev_rect = init_bbox
         self.img = []
-        for i in range(self.idx, self.len):
+        for i in range(self.index, self.length):
             self.x.append([frames[i], frames[i+1]])
             img_prev = cv2.imread(frames[i])
             img_prev = bgr2rgb(img_prev)
@@ -114,7 +114,7 @@ class GOTURN:
         """
         self.model.eval()
         st = time.time()
-        for i in range(self.idx, self.len):
+        for i in range(self.index, self.length):
             sample = self[i]
             bb = self.get_rect(sample)
             self.prev_rect = bb
