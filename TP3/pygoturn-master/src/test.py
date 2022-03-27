@@ -60,6 +60,7 @@ class GOTURN:
             img_curr = cv2.imread(frames[i+1])
             img_curr = bgr2rgb(img_curr)
             self.img.append([img_prev, img_curr])
+            print(self.img)
             """lines[i+1] = re.sub('\t', ',', lines[i+1])
             lines[i+1] = re.sub(' +', ',', lines[i+1])
             bb = lines[i+1].strip().split(',')
@@ -67,7 +68,6 @@ class GOTURN:
             bb = [bb[0], bb[1], bb[0]+bb[2], bb[1]+bb[3]]
             self.gt.append(bb)"""
         self.x = np.array(self.x)
-        print(init_bbox)
         print(init_bbox)
 
     def __getitem__(self, idx):
