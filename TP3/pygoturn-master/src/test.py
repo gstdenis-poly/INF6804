@@ -60,7 +60,7 @@ class GOTURN:
             img_curr = cv2.imread(frames[i+1])
             img_curr = bgr2rgb(img_curr)
             self.img.append([img_prev, img_curr])
-            print(self.img)
+            print(img_curr)
             """lines[i+1] = re.sub('\t', ',', lines[i+1])
             lines[i+1] = re.sub(' +', ',', lines[i+1])
             bb = lines[i+1].strip().split(',')
