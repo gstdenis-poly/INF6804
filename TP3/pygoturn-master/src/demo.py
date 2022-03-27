@@ -64,12 +64,12 @@ def save(im, bb, gt_bb, idx):
 
 
 def main(args):
+    print('TEST')
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
     tester = GOTURN(args.data_directory,
                     args.model_weights,
                     device)
-    print('TEST')
     if os.path.exists(args.save_directory):
         print('Save directory %s already exists' % (args.save_directory))
     else:
