@@ -53,8 +53,8 @@ class GOTURN:
         self.img = []
         for i in range(self.idx, self.len):
             img_ext = os.path.splitext(frames[0])
-            frame_prev = root_dir + "/frames/frame" + i + img_ext
-            frame_curr = root_dir + "/frames/frame" + (i + 1) + img_ext
+            frame_prev = root_dir + "/frames/frame" + str(i) + img_ext
+            frame_curr = root_dir + "/frames/frame" + str(i + 1) + img_ext
             self.x.append([frame_prev, frame_curr])
             img_prev = cv2.imread(frame_prev)
             img_prev = bgr2rgb(img_prev)
