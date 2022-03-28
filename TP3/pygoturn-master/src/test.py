@@ -41,7 +41,7 @@ class GOTURN:
         self.idx = index
         self.len = min(length, index + len(frames)) - 1
         frames = np.array(frames)
-        frames.sort()
+        #frames.sort()
         self.x = []
         f = open(root_dir + '/groundtruth_rect.txt')
         lines = f.readlines()
