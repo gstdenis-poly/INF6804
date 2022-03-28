@@ -45,8 +45,8 @@ class GOTURN:
         def atoi(text):
             return int(text) if text.isdigit() else text
         def natural_keys(text):
-            return [atoi(c) for c in re.split('(\d+)',text)]
-        frames.sort(key=natural_keys)
+            return [atoi(c) for c in re.split('(\d+)', text)]
+        frames = sorted(frames, key=natural_keys)
 
         self.x = []
         f = open(root_dir + '/groundtruth_rect.txt')
