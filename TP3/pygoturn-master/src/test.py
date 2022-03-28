@@ -37,17 +37,15 @@ class GOTURN:
         self.model.load_state_dict(checkpoint['state_dict'])
         self.model.to(device)
         frames = os.listdir(root_dir + '/frames')
-        frames = [root_dir + "/frames/" + frame for frame in frames]
-        self.idx = index
-        self.len = min(length, index + len(frames)) - 1
-        frames = np.array(frames)
-
         def atoi(text):
             return int(text) if text.isdigit() else text
         def natural_keys(text):
             return [atoi(c) for c in re.split('(\d+)', text)]
         frames = sorted(frames, key=natural_keys)
-
+        frames = [root_dir + "/frames/" + frame for frame in frames]
+        self.idx = index
+        self.len = min(length, index + len(frames)) - 1
+        frames = np.array(frames)
         self.x = []
         f = open(root_dir + '/groundtruth_rect.txt')
         lines = f.readlines()
