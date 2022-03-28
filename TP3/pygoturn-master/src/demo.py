@@ -54,7 +54,7 @@ def axis_aligned_iou(boxA, boxB):
     return iou
 
 
-def save(im, bb, idx):
+def save(im, bb, idx, f):
     im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)
     bb = [int(val) for val in bb]  # GOTURN output
     # plot GOTURN predictions with red rectangle
@@ -62,6 +62,11 @@ def save(im, bb, idx):
                        (0, 0, 255), 2)
     save_path = os.path.join(args.save_directory, str(idx)+'.jpg')
     cv2.imwrite(save_path, im)
+    # save bounding box into results.txt
+    bb_width = abs(bb[0] - bb[2])
+    bb_height = abs(bb[1] - bb[3])
+    f.write(idx + ' ' + bb[0] + ' ' + bb[1] + ' ')
+    f.write(bb_width + ' ' + bb_height + '\n')
 
 
 def main(args):
@@ -74,8 +79,12 @@ def main(args):
         print('Save directory %s already exists' % (args.save_directory))
     else:
         os.makedirs(args.save_directory)
+
+    # Initiate results.txt file
+    f = open(args.save_directory + '/results.txt', 'w')
+
     # save initial frame with bounding box
-    save(tester.img[0][0], tester.prev_rect, 1)
+    save(tester.img[0][0], tester.prev_rect, 1, f)
     tester.model.eval()
 
     # loop through sequence images
@@ -89,7 +98,7 @@ def main(args):
 
         # save current image with predicted rectangle
         im = tester.img[i][1]
-        save(im, bb, i+2)
+        save(im, bb, i+2, f)
 
 
 if __name__ == "__main__":
