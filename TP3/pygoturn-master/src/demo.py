@@ -17,7 +17,7 @@ parser.add_argument('-s', '--save-directory',
                     default='../result',
                     type=str, help='path to save directory')
 parser.add_argument('-i', '--index',
-                    default=0,
+                    default=1,
                     type=int, help='index of starting frame')
 parser.add_argument('-l', '--length',
                     default=800,
