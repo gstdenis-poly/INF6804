@@ -64,6 +64,8 @@ class GOTURN:
             img_prev = bgr2rgb(img_prev)
             img_curr = cv2.imread(frames[i+1])
             img_curr = bgr2rgb(img_curr)
+
+            print(frames[i+1])
             self.img.append([img_prev, img_curr])
         self.x = np.array(self.x)
         print(init_bbox)
