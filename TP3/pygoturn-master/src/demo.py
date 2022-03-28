@@ -100,6 +100,8 @@ def main(args):
         im = tester.img[i][1]
         save(im, bb, i+2, f)
 
+    f.close() # close results.txt
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
