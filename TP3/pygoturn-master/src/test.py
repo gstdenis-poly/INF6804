@@ -52,7 +52,7 @@ class GOTURN:
         self.prev_rect = init_bbox
         self.img = []
         for i in range(self.idx, self.len):
-            img_ext = os.path.splitext(frames[0])
+            img_ext = os.path.splitext(frames[0])[1]
             frame_prev = root_dir + "/frames/frame" + str(i) + img_ext
             frame_curr = root_dir + "/frames/frame" + str(i + 1) + img_ext
             self.x.append([frame_prev, frame_curr])
