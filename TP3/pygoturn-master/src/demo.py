@@ -65,8 +65,8 @@ def save(im, bb, idx, f):
     # save bounding box into results.txt
     bb_width = abs(bb[0] - bb[2])
     bb_height = abs(bb[1] - bb[3])
-    f.write(idx + ' ' + bb[0] + ' ' + bb[1] + ' ')
-    f.write(bb_width + ' ' + bb_height + '\n')
+    f.write(str(idx) + ' ' + str(bb[0]) + ' ' + str(bb[1]) + ' ')
+    f.write(str(bb_width) + ' ' + str(bb_height) + '\n')
 
 
 def main(args):
