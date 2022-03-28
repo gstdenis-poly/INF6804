@@ -37,11 +37,8 @@ class GOTURN:
         self.model.load_state_dict(checkpoint['state_dict'])
         self.model.to(device)
         frames = os.listdir(root_dir + '/frames')
-        frames = [root_dir + "/frames/" + frame for frame in frames]
         self.idx = index
         self.len = min(length, index + len(frames)) - 1
-        frames = np.array(frames)
-        #frames.sort()
         self.x = []
         f = open(root_dir + '/groundtruth_rect.txt')
         lines = f.readlines()
@@ -55,10 +52,13 @@ class GOTURN:
         self.prev_rect = init_bbox
         self.img = []
         for i in range(self.idx, self.len):
-            self.x.append([frames[i], frames[i+1]])
-            img_prev = cv2.imread(frames[i])
+            img_ext = os.path.splitext(frames[0])
+            frame_prev = root_dir + "/frames/frame" + i + img_ext
+            frame_curr = root_dir + "/frames/frame" + (i + 1) + img_ext
+            self.x.append([frame_prev, frame_curr])
+            img_prev = cv2.imread(frame_prev)
             img_prev = bgr2rgb(img_prev)
-            img_curr = cv2.imread(frames[i+1])
+            img_curr = cv2.imread(frame_curr)
             img_curr = bgr2rgb(img_curr)
             self.img.append([img_prev, img_curr])
         self.x = np.array(self.x)
