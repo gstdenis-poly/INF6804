@@ -56,8 +56,7 @@ class GOTURN:
                      init_bbox[0] + init_bbox[2],
                      init_bbox[1] + init_bbox[3]]
         # Rescale init_bbox according to given ratio
-        self.ratio = ratio / 100 if ratio in range(1, 100) else 1
-        init_bbox = [int(x * self.ratio) for x in init_bbox]
+        init_bbox = [int(x * ratio) for x in init_bbox]
         init_bbox = np.array(init_bbox)
         self.prev_rect = init_bbox
         self.img = []
@@ -65,8 +64,8 @@ class GOTURN:
             self.x.append([frames[i], frames[i+1]])
             img_prev = cv2.imread(frames[i])
             img_prev = bgr2rgb(img_prev)
-            width = int(img_prev.shape[1] * self.ratio)
-            height = int(img_prev.shape[0] * self.ratio)
+            width = int(img_prev.shape[1] * ratio)
+            height = int(img_prev.shape[0] * ratio)
             img_prev_rescaled = cv2.resize(img_prev, (width, height), 
                                            interpolation = cv2.INTER_AREA)
             img_curr = cv2.imread(frames[i+1])

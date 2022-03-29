@@ -17,7 +17,7 @@ parser.add_argument('-s', '--save-directory',
                     default='../result',
                     type=str, help='path to save directory')
 parser.add_argument('-r', '--ratio',
-                    default=100,
+                    default=50,
                     type=int, help='ratio of frames\' resolution')
 
 
@@ -69,10 +69,10 @@ def save(im, bb, idx, f, ratio):
 def main(args):
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
+    ratio = args.ratio / 100 if args.ratio in range(1, 100) else 1
     tester = GOTURN(args.data_directory,
                     args.model_weights,
-                    device,
-                    args.ratio)
+                    device, ratio)
     if os.path.exists(args.save_directory):
         print('Save directory %s already exists' % (args.save_directory))
     else:
@@ -82,7 +82,7 @@ def main(args):
     f = open(args.save_directory + '/results.txt', 'w')
 
     # save initial frame with bounding box
-    save(tester.img[0][0], tester.prev_rect, 1, f, args.ratio)
+    save(tester.img[0][0], tester.prev_rect, 1, f, ratio)
     tester.model.eval()
 
     # loop through sequence images
@@ -96,7 +96,7 @@ def main(args):
 
         # save current image with predicted rectangle
         im = tester.img[i][1]
-        save(im, bb, i+2, f, args.ratio)
+        save(im, bb, i+2, f, ratio)
 
     f.close() # close results.txt
 
