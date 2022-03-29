@@ -57,19 +57,19 @@ class GOTURN:
         init_bbox = np.array(init_bbox)
         self.prev_rect = init_bbox
         self.img = []
-        self.scale = scale / 100 if scale in range(1, 100) else 1
+        scale = scale / 100 if scale in range(1, 100) else 1
         for i in range(self.len):
             self.x.append([frames[i], frames[i+1]])
             img_prev = cv2.imread(frames[i])
             img_prev = bgr2rgb(img_prev)
-            width = int(img_prev.shape[1] * self.scale)
-            height = int(img_prev.shape[0] * self.scale)
+            width = int(img_prev.shape[1] * scale)
+            height = int(img_prev.shape[0] * scale)
             img_prev_rescaled = cv2.resize(img_prev, (width, height), 
                                            interpolation = cv2.INTER_AREA)
             img_curr = cv2.imread(frames[i+1])
             img_curr = bgr2rgb(img_curr)
-            width = int(img_curr.shape[1] * self.scale)
-            height = int(img_curr.shape[0] * self.scale)
+            width = int(img_curr.shape[1] * scale)
+            height = int(img_curr.shape[0] * scale)
             img_curr_rescaled = cv2.resize(img_curr, (width, height), 
                                            interpolation = cv2.INTER_AREA)
             self.img.append([img_prev_rescaled, img_curr_rescaled])
