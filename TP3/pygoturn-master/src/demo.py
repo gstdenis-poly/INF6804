@@ -16,9 +16,9 @@ parser.add_argument('-d', '--data-directory',
 parser.add_argument('-s', '--save-directory',
                     default='../result',
                     type=str, help='path to save directory')
-parser.add_argument('-scale', '--scale',
+parser.add_argument('-r', '--ratio',
                     default=100,
-                    type=int, help='scale of frames between 1 and 100')
+                    type=int, help='ratio of frames\' resolution')
 
 
 def axis_aligned_iou(boxA, boxB):
@@ -51,9 +51,9 @@ def axis_aligned_iou(boxA, boxB):
     return iou
 
 
-def save(im, bb, idx, f):
+def save(im, bb, idx, f, ratio):
     im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)
-    bb = [int(val) for val in bb]  # GOTURN output
+    bb = [int(val / ratio) for val in bb]  # GOTURN output
     # plot GOTURN predictions with red rectangle
     im = cv2.rectangle(im, (bb[0], bb[1]), (bb[2], bb[3]),
                        (0, 0, 255), 2)
@@ -72,7 +72,7 @@ def main(args):
     tester = GOTURN(args.data_directory,
                     args.model_weights,
                     device,
-                    args.scale)
+                    args.ratio)
     if os.path.exists(args.save_directory):
         print('Save directory %s already exists' % (args.save_directory))
     else:
@@ -82,7 +82,7 @@ def main(args):
     f = open(args.save_directory + '/results.txt', 'w')
 
     # save initial frame with bounding box
-    save(tester.img[0][0], tester.prev_rect, 1, f)
+    save(tester.img[0][0], tester.prev_rect, 1, f, args.ratio)
     tester.model.eval()
 
     # loop through sequence images
@@ -96,7 +96,7 @@ def main(args):
 
         # save current image with predicted rectangle
         im = tester.img[i][1]
-        save(im, bb, i+2, f)
+        save(im, bb, i+2, f, args.ratio)
 
     f.close() # close results.txt
 
