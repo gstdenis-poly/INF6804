@@ -22,7 +22,7 @@ parser.add_argument('-d', '--data-directory',
 
 class GOTURN:
     """Tester for OTB formatted sequences"""
-    def __init__(self, root_dir, index, length, model_path, device):
+    def __init__(self, root_dir, model_path, device, scale):
         self.root_dir = root_dir
         self.device = device
         self.transform = NormalizeToTensor()
@@ -43,8 +43,7 @@ class GOTURN:
             return [atoi(c) for c in re.split('(\d+)', text)]
         frames = sorted(frames, key=natural_keys)
         frames = [root_dir + "/frames/" + frame for frame in frames]
-        self.idx = index
-        self.len = min(length, index + len(frames)) - 1
+        self.len = len(frames)-1
         frames = np.array(frames)
         self.x = []
         f = open(root_dir + '/groundtruth_rect.txt')
@@ -58,13 +57,22 @@ class GOTURN:
         init_bbox = np.array(init_bbox)
         self.prev_rect = init_bbox
         self.img = []
-        for i in range(self.idx, self.len):
+        self.scale = scale / 100 if scale in range(1, 100) else 1
+        for i in range(self.len):
             self.x.append([frames[i], frames[i+1]])
             img_prev = cv2.imread(frames[i])
             img_prev = bgr2rgb(img_prev)
+            width = int(img_prev.shape[1] * self.scale)
+            height = int(img_prev.shape[0] * self.scale)
+            img_prev_rescaled = cv2.resize(img_prev, (width, height), 
+                                           interpolation = cv2.INTER_AREA)
             img_curr = cv2.imread(frames[i+1])
             img_curr = bgr2rgb(img_curr)
-            self.img.append([img_prev, img_curr])
+            width = int(img_curr.shape[1] * self.scale)
+            height = int(img_curr.shape[0] * self.scale)
+            img_curr_rescaled = cv2.resize(img_curr, (width, height), 
+                                           interpolation = cv2.INTER_AREA)
+            self.img.append([img_prev_rescaled, img_curr_rescaled])
         self.x = np.array(self.x)
         print(init_bbox)
 
@@ -118,7 +126,7 @@ class GOTURN:
         """
         self.model.eval()
         st = time.time()
-        for i in range(self.idx, self.len):
+        for i in range(self.len):
             sample = self[i]
             bb = self.get_rect(sample)
             self.prev_rect = bb

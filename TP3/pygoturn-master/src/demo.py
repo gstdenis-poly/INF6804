@@ -16,12 +16,9 @@ parser.add_argument('-d', '--data-directory',
 parser.add_argument('-s', '--save-directory',
                     default='../result',
                     type=str, help='path to save directory')
-parser.add_argument('-i', '--index',
-                    default=0,
-                    type=int, help='index of starting frame')
-parser.add_argument('-l', '--length',
-                    default=800,
-                    type=int, help='number of frames')
+parser.add_argument('-scale', '--scale',
+                    default=100,
+                    type=int, help='scale of frames between 1 and 100')
 
 
 def axis_aligned_iou(boxA, boxB):
@@ -72,9 +69,10 @@ def save(im, bb, idx, f):
 def main(args):
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
-    tester = GOTURN(args.data_directory, args.index, args.length,
+    tester = GOTURN(args.data_directory,
                     args.model_weights,
-                    device)
+                    device,
+                    args.scale)
     if os.path.exists(args.save_directory):
         print('Save directory %s already exists' % (args.save_directory))
     else:
