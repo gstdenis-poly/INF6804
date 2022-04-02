@@ -90,16 +90,15 @@ def main():
                        os.path.join(args.data_directory,
                        'alov300++_rectangleAnnotation_full/'),
                        transform, input_size)
-    """imagenet = ILSVRC2014_DET_Dataset(os.path.join(args.data_directory,
+    imagenet = ILSVRC2014_DET_Dataset(os.path.join(args.data_directory,
                                       'ILSVRC2014_DET_train/'),
                                       os.path.join(args.data_directory,
                                       'ILSVRC2014_DET_bbox_train/'),
                                       bb_params,
                                       transform,
-                                      input_size)"""
+                                      input_size)
     # list of datasets to train on
-    # datasets = [alov, imagenet]
-    datasets = [alov]
+    datasets = [alov, imagenet]
 
     # load model
     net = model.GoNet().to(device)
@@ -221,7 +220,6 @@ def train_model(model, datasets, criterion, optimizer):
             print("=> loading checkpoint '{}'".format(args.resume))
             checkpoint = torch.load(args.resume)
             start_itr = checkpoint['itr']
-            start_itr = 0
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             scheduler.load_state_dict(checkpoint['scheduler'])
