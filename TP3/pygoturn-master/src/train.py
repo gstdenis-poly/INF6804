@@ -220,7 +220,7 @@ def train_model(model, datasets, criterion, optimizer):
         if os.path.isfile(args.resume):
             print("=> loading checkpoint '{}'".format(args.resume))
             checkpoint = torch.load(args.resume)
-            #start_itr = checkpoint['itr']
+            start_itr = checkpoint['itr']
             start_itr = 0
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
@@ -230,8 +230,8 @@ def train_model(model, datasets, criterion, optimizer):
             lr = checkpoint['lr']
             np.random.set_state(checkpoint['np_rand_state'])
             torch.set_rng_state(checkpoint['torch_rand_state'])
-            #print("=> loaded checkpoint '{}' (iteration {})"
-                  #.format(args.resume, checkpoint['itr']))
+            print("=> loaded checkpoint '{}' (iteration {})"
+                  .format(args.resume, checkpoint['itr']))
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
