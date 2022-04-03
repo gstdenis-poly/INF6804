@@ -54,11 +54,11 @@ class HOTA(_BaseMetric):
             # Count the potential matches between ids in each timestep
             # These are normalised, weighted by the match similarity.
             similarity = data['similarity_scores'][t]
-            sim_iou_denom = similarity.sum(0)[np.newaxis, :] + similarity.sum(1)[:, np.newaxis] - similarity
-            sim_iou = np.zeros_like(similarity)
-            sim_iou_mask = sim_iou_denom > 0 + np.finfo('float').eps
-            sim_iou[sim_iou_mask] = similarity[sim_iou_mask] / sim_iou_denom[sim_iou_mask]
-            potential_matches_count[gt_ids_t[:, np.newaxis], tracker_ids_t[np.newaxis, :]] += sim_iou
+            #sim_iou_denom = similarity.sum(0)[np.newaxis, :] + similarity.sum(1)[:, np.newaxis] - similarity
+            #sim_iou = np.zeros_like(similarity)
+            #sim_iou_mask = sim_iou_denom > 0 + np.finfo('float').eps
+            #sim_iou[sim_iou_mask] = similarity[sim_iou_mask] / sim_iou_denom[sim_iou_mask]
+            potential_matches_count[gt_ids_t[:, np.newaxis], tracker_ids_t[np.newaxis, :]] += similarity
 
             # Calculate the total number of dets for each gt_id and tracker_id.
             gt_id_count[gt_ids_t] += 1
