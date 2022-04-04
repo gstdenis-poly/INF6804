@@ -123,7 +123,7 @@ class HOTA(_BaseMetric):
             res[field] = self._combine_sum(all_res, field)
         for field in ['AssRe', 'AssPr', 'AssA']:
             res[field] = self._combine_weighted_av(all_res, field, res, weight_field='HOTA_TP')
-        loca_weighted_sum = sum([all_res[k]['LocA'] * all_res[k]['HOTA_TP'] for k in all_res])
+        loca_weighted_sum = sum([all_res[k]['LocA'] * all_res[k]['HOTA_TP'] for k in all_res.keys()])
         res['LocA'] = np.maximum(1e-10, loca_weighted_sum) / np.maximum(1e-10, res['HOTA_TP'])
         res = self._compute_final_fields(res)
         return res
