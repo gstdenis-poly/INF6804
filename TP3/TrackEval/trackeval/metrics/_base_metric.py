@@ -55,7 +55,7 @@ class _BaseMetric(ABC):
     @staticmethod
     def _combine_sum(all_res, field):
         """Combine sequence results via sum"""
-        return sum([all_res[k][field] for k in all_res.keys()])
+        return sum([all_res[k][field] for k in all_res])
 
     @staticmethod
     def _combine_weighted_av(all_res, field, comb_res, weight_field):
